@@ -168,6 +168,15 @@ ul,ol{margin:0;padding:0;list-style:none}
 .vtab small{display:block;font-weight:500;opacity:.8}
 .vcap{margin-top:10px;font-size:.875rem;color:var(--muted)}
 
+/* Instagram reels (official embeds, loaded only when scrolled near) */
+.insta{display:grid;gap:22px;--cw:min(328px,calc(100vw - 64px))}
+.insta-text .btn{margin-top:20px}
+.reels{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;padding:12px 16px 44px;margin:-12px -16px -30px;scrollbar-width:none}
+.reels::-webkit-scrollbar{display:none}
+.ig-card{flex:0 0 auto;padding:8px;border-radius:30px;scroll-snap-align:center}
+.ig-card iframe{display:block;width:var(--cw);height:calc(var(--cw) * 1.25 + 232px);border:0;border-radius:22px;background:#fff}
+.ig-card a.fallback{display:grid;place-items:center;width:var(--cw);min-height:300px;padding:20px;text-align:center;font-weight:700;color:var(--blue-d)}
+
 .tags{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
 .tags li{padding:9px 16px;border-radius:99px;background:rgba(255,255,255,.7);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--stroke);font-weight:600;font-size:.95rem;box-shadow:0 4px 14px rgba(43,106,147,.08)}
 
@@ -250,6 +259,9 @@ footer p + p{margin-top:8px}
   .photo{aspect-ratio:4/5;margin-top:56px}
   .treat{columns:1}
   .docs{grid-template-columns:.8fr 1.2fr;gap:38px;padding:34px;align-items:center}
+  .insta{grid-template-columns:1fr auto;gap:48px;align-items:center}
+  .insta>*{min-width:0}
+  .reels{max-width:700px}
   .steps{grid-template-columns:repeat(3,1fr);gap:34px;padding:34px}
   .steps li{padding-left:0;padding-top:62px}
   .steps li:not(:last-child)::after{left:56px;right:-22px;top:21px;bottom:auto;width:auto;height:2px}
@@ -418,6 +430,19 @@ footer p + p{margin-top:8px}
         <p class="vcap" id="icap">Dr. Yashwanth on the Reset approach. Video is in Telugu.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="sec" id="instagram">
+  <div class="wrap insta">
+    <div class="insta-text">
+      <p class="kicker">Instagram</p>
+      <h2 class="title">See Reset on Instagram</h2>
+      <p class="intro">A short clip from our team. Follow us for more videos on pain care.</p>
+      <a class="btn ghost" href="https://www.instagram.com/reset_wellness_center_madhapur" target="_blank" rel="noopener">Follow on Instagram</a>
+    </div>
+    <!-- To add a reel, put its ID in this list (the part after /reel/ in the Instagram link) -->
+    <div class="reels" id="reels" data-ids="C_DHjInyh2N" aria-label="Instagram reels"></div>
   </div>
 </section>
 
@@ -687,6 +712,32 @@ footer p + p{margin-top:8px}
   $$('.watch').forEach(function(b){
     b.addEventListener('click', function(){ openVideos(b.dataset.title, b.dataset.clips.split(','), '', b.dataset.title); });
   });
+
+  /* ---- Instagram reels: iframes are created only when the section nears the screen ---- */
+  (function(){
+    var box = $('#reels'); if (!box) return;
+    var ids = (box.dataset.ids || '').split(',').filter(Boolean);
+    ids.forEach(function(id){
+      var card = document.createElement('div'); card.className = 'ig-card glass';
+      var a = document.createElement('a'); a.className = 'fallback'; a.target = '_blank'; a.rel = 'noopener';
+      a.href = 'https://www.instagram.com/reel/' + id + '/'; a.textContent = 'Watch this reel on Instagram';
+      card.appendChild(a); card.dataset.id = id; box.appendChild(card);
+    });
+    function load(){
+      $$('.ig-card', box).forEach(function(card){
+        var f = document.createElement('iframe');
+        f.src = 'https://www.instagram.com/reel/' + card.dataset.id + '/embed/';
+        f.title = 'Instagram reel from Reset Wellness'; f.loading = 'lazy'; f.allowFullscreen = true;
+        f.setAttribute('allow', 'encrypted-media; fullscreen');
+        f.referrerPolicy = 'strict-origin-when-cross-origin';
+        card.textContent = ''; card.appendChild(f);
+      });
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(es){ if (es[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '500px 0px' });
+      io.observe(box);
+    } else { load(); }
+  })();
 
   /* ---- Scroll to form and focus ---- */
   $$('[data-focus-form]').forEach(function(a){
