@@ -84,6 +84,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 /* Lead card */
 .card{padding:22px 18px 20px}
 .card h2{font-size:1.6rem}
+.gate{margin:0 0 14px;padding:12px 14px;border-radius:16px;background:rgba(234,90,60,.12);border:1px solid rgba(234,90,60,.4);color:#8a2d18;font-weight:600;font-size:.95rem;line-height:1.4}
 .card .sub{margin-top:6px;color:var(--muted);font-size:.975rem}
 .pick{display:grid;grid-template-columns:minmax(120px,150px) 1fr;gap:14px;margin-top:16px;align-items:center}
 .figure{position:relative;aspect-ratio:200/340;background:linear-gradient(180deg,#E8F1FA,#F1ECFA);border:1px solid var(--stroke);border-radius:22px;overflow:hidden}
@@ -325,6 +326,7 @@ footer p + p{margin-top:8px}
 
     <div class="card glass" id="book-card">
       <form id="book" novalidate autocomplete="on">
+        <p class="gate" id="gateMsg" role="status" hidden>Please fill in this form first. Once you send it, the Call and WhatsApp buttons open straight away.</p>
         <h2>Book your consultation</h2>
         <p class="sub">Tap where it hurts and add your number. We call to confirm a time.</p>
 
@@ -605,17 +607,40 @@ footer p + p{margin-top:8px}
     fbq('init', CONFIG.pixelId);
     fbq('track', 'PageView');
   }
-  function track(type, name, data){ try { if (window.fbq) fbq(type, name, data || {}); } catch(e){} }
+  function track(type, name, data, opts){
+    try { if (window.fbq) { if (opts) fbq(type, name, data || {}, opts); else fbq(type, name, data || {}); } } catch(e){}
+  }
+  function readCookie(n){
+    var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : '';
+  }
 
   /* ---- WhatsApp links ---- */
   function waLink(text){ return 'https://wa.me/' + CONFIG.whatsappNumber + '?text=' + encodeURIComponent(text); }
   $$('[data-wa]').forEach(function(a){
     a.href = waLink('Hi, I would like to book a consultation at Reset Wellness, ' + CONFIG.branch + '.');
-    a.addEventListener('click', function(){ track('track', 'Contact', {method:'whatsapp'}); });
   });
-  $$('[data-track^="call"]').forEach(function(a){
-    a.addEventListener('click', function(){ track('track', 'Contact', {method:'call'}); });
-  });
+
+  /* ---- Every Call and WhatsApp button asks for the form first ----
+     Until the visitor has sent the form in this session, a tap on any call or WhatsApp link
+     scrolls to the form instead. After submitting, the buttons work normally. */
+  var leadDone = false;
+  try { leadDone = sessionStorage.getItem('rw_lead') === '1'; } catch(e){}
+  function askForForm(method){
+    if (typeof closeDlg === 'function') closeDlg();           // close a video pop-up if one is open
+    var card = $('#book-card');
+    $('#gateMsg').hidden = false;
+    track('trackCustom', 'ContactIntent', { method: method });
+    card.scrollIntoView({ behavior: smooth, block: 'start' });
+    setTimeout(function(){ var n = $('#name'); if (n) n.focus({ preventScroll: true }); }, 450);
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href^="tel:"], a[data-wa], a[href^="https://wa.me"]') : null;
+    if (!a) return;
+    var method = (a.hasAttribute('data-wa') || /wa\.me/.test(a.href)) ? 'whatsapp' : 'call';
+    if (!leadDone && !a.closest('#done')) { e.preventDefault(); askForForm(method); return; }
+    track('track', 'Contact', { method: method });
+  }, true);
 
   /* ---- Spine: small vertebrae down the middle of the figure ---- */
   var spine = $('#spine');
@@ -832,6 +857,12 @@ footer p + p{margin-top:8px}
       page: window.location.origin + window.location.pathname
     };
     Object.keys(attrib).forEach(function(k){ payload[k] = attrib[k]; });
+    // Same id goes to the Pixel and to the server (Conversions API) so Meta counts the lead once.
+    var eventId = 'lead_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    payload.event_id = eventId;
+    payload.fbp = readCookie('_fbp');
+    payload.fbc = readCookie('_fbc') || (attrib.fbclid ? 'fb.1.' + Date.now() + '.' + attrib.fbclid : '');
+    payload.ua = navigator.userAgent;
 
     btn.disabled = true; btn.textContent = 'Sending...';
 
@@ -845,7 +876,10 @@ footer p + p{margin-top:8px}
     Promise.race([send.catch(function(){ /* network failure: still show the WhatsApp fallback below */ }), grace])
       .then(function(){
         if (!CONFIG.sheetUrl) console.info('[lead] sheetUrl not set, lead not saved:', payload);
-        track('track', 'Lead', { content_name: 'Nallagandla consultation', content_category: area });
+        track('track', 'Lead', { content_name: 'Nallagandla consultation', content_category: area }, { eventID: eventId });
+        leadDone = true;
+        try { sessionStorage.setItem('rw_lead', '1'); } catch(e){}
+        $('#gateMsg').hidden = true;
         $('#doneTitle').textContent = 'Request received, ' + name.split(' ')[0];
         $('#doneWa').href = waLink('Hi, I am ' + name + '. I have ' + area.toLowerCase() + ' pain and would like to book a consultation at Reset Wellness, ' + CONFIG.branch + '. Location: ' + locality + '. My number is ' + phone + '.');
         $('#book-card').classList.add('sent');
