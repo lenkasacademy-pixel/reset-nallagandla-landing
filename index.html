@@ -847,7 +847,7 @@ footer p + p{margin-top:8px}
         if (!CONFIG.sheetUrl) console.info('[lead] sheetUrl not set, lead not saved:', payload);
         track('track', 'Lead', { content_name: 'Nallagandla consultation', content_category: area });
         $('#doneTitle').textContent = 'Request received, ' + name.split(' ')[0];
-        $('#doneWa').href = waLink('Hi, I am ' + name + '. I have ' + area.toLowerCase() + ' pain and would like to book a consultation at Reset Wellness, ' + CONFIG.branch + '. I live in ' + locality + '. My number is ' + phone + '.');
+        $('#doneWa').href = waLink('Hi, I am ' + name + '. I have ' + area.toLowerCase() + ' pain and would like to book a consultation at Reset Wellness, ' + CONFIG.branch + '. Location: ' + locality + '. My number is ' + phone + '.');
         $('#book-card').classList.add('sent');
         var d = $('#done'); d.focus({preventScroll:true});
         d.scrollIntoView({behavior:'smooth', block:'center'});
