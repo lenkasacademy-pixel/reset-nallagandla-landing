@@ -149,6 +149,18 @@ ul,ol{margin:0;padding:0;list-style:none}
 .photo img{width:100%;height:100%;object-fit:cover}
 .photo figcaption{position:absolute;left:12px;right:12px;bottom:12px;padding:12px 16px;border-radius:20px;font-weight:600;font-size:.95rem}
 
+/* Dr. Amrita (on-site doctor) */
+.amrita{margin-top:24px;padding:18px;display:grid;grid-template-columns:108px 1fr;grid-template-areas:"photo head" "roles roles" "text text";gap:14px 16px;align-items:center}
+.a-photo{grid-area:photo;align-self:start;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;border-radius:22px;box-shadow:0 10px 26px rgba(43,106,147,.22)}
+.a-head{grid-area:head}
+.a-head h3{font-size:1.7rem;margin-top:8px}
+.onsite{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:var(--blue-l);color:var(--blue-d);font-size:.8125rem;font-weight:700;line-height:1.2}
+.onsite::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--coral)}
+.roles{grid-area:roles;display:flex;flex-wrap:wrap;gap:8px}
+.roles li{padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.8);border:1px solid var(--line);font-weight:600;font-size:.9rem}
+.a-text{grid-area:text;color:var(--muted)}
+.sub-title{font-size:clamp(1.4rem,5vw,1.9rem);margin-top:8px}
+
 /* Doctor card with inline videos */
 .docs{margin-top:24px;padding:22px 18px;display:grid;gap:22px}
 .dr{display:flex;align-items:center;gap:16px}
@@ -258,6 +270,9 @@ footer p + p{margin-top:8px}
   .split{grid-template-columns:1.1fr .9fr;gap:36px;align-items:start}
   .photo{aspect-ratio:4/5;margin-top:56px}
   .treat{columns:1}
+  .amrita{grid-template-columns:190px 1fr;grid-template-areas:"photo head" "photo roles" "photo text";gap:12px 34px;padding:26px;align-items:start}
+  .a-head{align-self:end}
+  .a-text{align-self:start;max-width:52ch}
   .docs{grid-template-columns:.8fr 1.2fr;gap:38px;padding:34px;align-items:center}
   .insta{grid-template-columns:1fr auto;gap:48px;align-items:center}
   .insta>*{min-width:0}
@@ -303,6 +318,7 @@ footer p + p{margin-top:8px}
       <ul class="ticks">
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>No medicines, no surgery</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>Open all 7 days, 10 AM to 7:30 PM</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>Dr. Amrita, physiotherapist and chiropractor, is at this branch</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>Opposite Aparna Sarovar, HUDA Layout</li>
       </ul>
     </div>
@@ -409,8 +425,23 @@ footer p + p{margin-top:8px}
 
 <section class="sec" id="doctor">
   <div class="wrap">
-    <p class="kicker">Meet the doctor</p>
-    <h2 class="title">See how Dr. Yashwanth works</h2>
+    <p class="kicker">Meet the doctors</p>
+    <h2 class="title">Your doctors at Reset</h2>
+
+    <article class="amrita glass" aria-labelledby="amrita-name">
+      <img class="a-photo" src="assets/dr-amrita.jpg" width="640" height="800" alt="Dr. Amrita" loading="lazy">
+      <div class="a-head">
+        <p class="onsite">Present at the Nallagandla branch</p>
+        <h3 id="amrita-name">Dr. Amrita</h3>
+      </div>
+      <ul class="roles" aria-label="Qualifications and therapies">
+        <li>Physiotherapist</li><li>Alternative Therapist</li><li>Chiropractor</li><li>Acupuncturist</li>
+      </ul>
+      <p class="a-text">Dr. Amrita sees patients at this branch. She can assess your pain and treat it with physiotherapy, chiropractic care or acupuncture, as your case needs.</p>
+    </article>
+
+    <p class="kicker" style="margin-top:34px">From the Reset team</p>
+    <h3 class="sub-title">See how Dr. Yashwanth works</h3>
     <div class="docs glass">
       <div>
         <div class="dr">
@@ -497,6 +528,7 @@ footer p + p{margin-top:8px}
     <p class="kicker">Questions</p>
     <h2 class="title">Before you book</h2>
     <div class="faq glass">
+      <details><summary>Who will I see at the Nallagandla branch?</summary><p>Dr. Amrita, a physiotherapist, alternative therapist, chiropractor and acupuncturist, is present at this branch.</p></details>
       <details><summary>Do I need an appointment?</summary><p>An appointment keeps your wait short. Send the form above and we will confirm a time by phone.</p></details>
       <details><summary>Is the treatment drug-free?</summary><p>Yes. Reset uses hands-on and traditional therapies, with no medicines and no surgery.</p></details>
       <details><summary>How many sessions will I need?</summary><p>It depends on the cause and how long you have had the pain. The doctor tells you after the first assessment.</p></details>
