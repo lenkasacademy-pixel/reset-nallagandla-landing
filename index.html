@@ -825,11 +825,14 @@ footer p + p{margin-top:8px}
 
     btn.disabled = true; btn.textContent = 'Sending...';
 
+    // Google's script can take a few seconds to answer. keepalive lets the save finish in the
+    // background, so the thank-you screen shows after at most 1.2 seconds.
     var send = CONFIG.sheetUrl
-      ? fetch(CONFIG.sheetUrl, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
+      ? fetch(CONFIG.sheetUrl, { method:'POST', mode:'no-cors', keepalive:true, headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
       : Promise.resolve();
+    var grace = new Promise(function(r){ setTimeout(r, 1200); });
 
-    send.catch(function(){ /* network failure: still show the WhatsApp fallback below */ })
+    Promise.race([send.catch(function(){ /* network failure: still show the WhatsApp fallback below */ }), grace])
       .then(function(){
         if (!CONFIG.sheetUrl) console.info('[lead] sheetUrl not set, lead not saved:', payload);
         track('track', 'Lead', { content_name: 'Nallagandla consultation', content_category: area });
