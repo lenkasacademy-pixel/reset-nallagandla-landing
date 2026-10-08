@@ -3,3 +3,4 @@ Photo on this page (CC0 1.0 public-domain dedication, no attribution required, c
 Found via Openverse (api.openverse.org).
 Fonts: Inter (SIL Open Font License 1.1), from the starter kit.
 Videos and the doctor portrait: stills and clips from the iDream interview with Dr. Yashwanth Vemula.
+Font: Noto Sans Telugu (SIL Open Font License 1.1), Telugu subset, from Google Fonts.

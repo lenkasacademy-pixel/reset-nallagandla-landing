@@ -12,6 +12,7 @@
 <style>
 @font-face{font-family:"Inter";src:url("assets/fonts/Inter-400.woff2") format("woff2");font-weight:400 500;font-display:swap}
 @font-face{font-family:"Inter";src:url("assets/fonts/Inter-700.woff2") format("woff2");font-weight:600 800;font-display:swap}
+@font-face{font-family:"Noto Sans Telugu";src:url("assets/fonts/NotoSansTelugu-telugu.woff2") format("woff2");font-weight:400 700;font-display:swap;unicode-range:U+0C00-0C7F,U+200C-200D,U+25CC}
 :root{
   --ink:#1d1d1f;
   --muted:#5a6570;
@@ -27,7 +28,7 @@
   --blur:18px;
   --r:32px;
   --shadow:0 22px 56px rgba(43,106,147,.15),0 1px 0 rgba(255,255,255,.9) inset;
-  --font:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font:"Inter","Noto Sans Telugu",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme:light;
 }
 @media (min-width:720px){:root{--blur:30px}}
@@ -101,7 +102,14 @@ ul,ol{margin:0;padding:0;list-style:none}
 .chips legend{padding:0;margin-bottom:8px;font-weight:700;font-size:.95rem}
 .chip{position:relative;display:block}
 .chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
-.chip span{display:flex;align-items:center;min-height:38px;padding:0 14px;border-radius:14px;border:1px solid var(--line);font-weight:600;font-size:.95rem;background:rgba(255,255,255,.7);transition:background .12s,color .12s,border-color .12s}
+.te{font-family:"Noto Sans Telugu","Inter",system-ui,sans-serif;font-weight:500;color:var(--muted);letter-spacing:0;font-style:normal}
+.card h2 .te{display:block;font-size:.6em;font-weight:600;margin-top:5px;line-height:1.35}
+.card .sub .te,.fine .te,.gate .te,.err .te,.chips-err .te{display:block;margin-top:2px}
+.field label .te,.chips legend .te{font-size:.92em;margin-left:6px}
+.btn .te{color:inherit;font-size:.82em;font-weight:600;opacity:.92}
+.chip span{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1.2;min-height:44px;padding:5px 14px;border-radius:14px;border:1px solid var(--line);font-weight:600;font-size:.95rem;background:rgba(255,255,255,.7);transition:background .12s,color .12s,border-color .12s}
+.chip .te{font-size:.78rem;color:var(--muted)}
+.chip input:checked + span .te{color:rgba(255,255,255,.88)}
 .chip input:checked + span{background:linear-gradient(180deg,#3980AC,var(--blue));border-color:transparent;color:#fff;box-shadow:0 6px 14px rgba(43,106,147,.3)}
 .chip input:focus-visible + span{outline:3px solid var(--coral);outline-offset:2px}
 .field{margin-top:14px}
@@ -118,8 +126,15 @@ ul,ol{margin:0;padding:0;list-style:none}
 .fine{margin-top:10px;font-size:.8125rem;color:var(--muted);text-align:center}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .done{display:none;padding:6px 2px 2px}
+.done:focus{outline:none}
 .done h2{font-size:1.6rem}
 .done p{margin-top:8px;color:var(--muted)}
+.done .te{display:block;margin-top:4px}
+.d-video{margin-top:14px}
+.d-video .vwrap{border-radius:18px}
+.d-note{margin-top:8px;font-size:.85rem}
+.done .btn{flex-direction:column;gap:2px;min-height:58px;text-align:center;padding:8px 18px}
+.done .btn .te{margin:0;line-height:1.2}
 .done .btn{margin-top:14px}
 .done .btn.ghost{margin-top:10px}
 .card.sent form{display:none}
@@ -326,9 +341,9 @@ footer p + p{margin-top:8px}
 
     <div class="card glass" id="book-card">
       <form id="book" novalidate autocomplete="on">
-        <p class="gate" id="gateMsg" role="status" hidden>Please fill in this form first. Once you send it, the Call and WhatsApp buttons open straight away.</p>
-        <h2>Book your consultation</h2>
-        <p class="sub">Tap where it hurts and add your number. We call to confirm a time.</p>
+        <p class="gate" id="gateMsg" role="status" hidden>Please fill in this form first. Once you send it, the Call and WhatsApp buttons open straight away.<span class="te" lang="te">ముందుగా ఈ ఫారం నింపండి. పంపిన వెంటనే కాల్, వాట్సాప్ బటన్లు పనిచేస్తాయి.</span></p>
+        <h2>Book your consultation<span class="te" lang="te">మీ కన్సల్టేషన్ బుక్ చేయండి</span></h2>
+        <p class="sub">Tap where it hurts and add your number. We call to confirm a time.<span class="te" lang="te">ఎక్కడ నొప్పిగా ఉందో ఎంచుకుని, మీ నంబర్ ఇవ్వండి. సమయం నిర్ధారించడానికి మేము కాల్ చేస్తాము.</span></p>
 
         <div class="pick">
           <div class="figure" id="figure">
@@ -353,45 +368,51 @@ footer p + p{margin-top:8px}
           </div>
 
           <fieldset class="chips" id="areas">
-            <legend>Where does it hurt?</legend>
-            <label class="chip"><input type="radio" name="area" value="Neck"><span>Neck</span></label>
-            <label class="chip"><input type="radio" name="area" value="Shoulder"><span>Shoulder</span></label>
-            <label class="chip"><input type="radio" name="area" value="Back"><span>Back</span></label>
-            <label class="chip"><input type="radio" name="area" value="Hip &amp; leg"><span>Hip &amp; leg</span></label>
-            <label class="chip"><input type="radio" name="area" value="Knee"><span>Knee</span></label>
-            <label class="chip"><input type="radio" name="area" value="Migraine / head"><span>Migraine</span></label>
-            <label class="chip"><input type="radio" name="area" value="Other"><span>Somewhere else</span></label>
+            <legend>Where does it hurt?<span class="te" lang="te">ఎక్కడ నొప్పిగా ఉంది?</span></legend>
+            <label class="chip"><input type="radio" name="area" value="Neck"><span>Neck<em class="te" lang="te">మెడ</em></span></label>
+            <label class="chip"><input type="radio" name="area" value="Shoulder"><span>Shoulder<em class="te" lang="te">భుజం</em></span></label>
+            <label class="chip"><input type="radio" name="area" value="Back"><span>Back<em class="te" lang="te">వెన్ను</em></span></label>
+            <label class="chip"><input type="radio" name="area" value="Hip &amp; leg"><span>Hip &amp; leg<em class="te" lang="te">తుంటి &amp; కాలు</em></span></label>
+            <label class="chip"><input type="radio" name="area" value="Knee"><span>Knee<em class="te" lang="te">మోకాలు</em></span></label>
+            <label class="chip"><input type="radio" name="area" value="Migraine / head"><span>Migraine<em class="te" lang="te">మైగ్రేన్</em></span></label>
+            <label class="chip"><input type="radio" name="area" value="Other"><span>Somewhere else<em class="te" lang="te">ఇంకెక్కడైనా</em></span></label>
           </fieldset>
         </div>
-        <p class="chips-err" id="areaErr" role="alert">Choose where it hurts so the doctor can prepare.</p>
+        <p class="chips-err" id="areaErr" role="alert">Choose where it hurts so the doctor can prepare.<span class="te" lang="te">డాక్టర్ సిద్ధం కావడానికి ఎక్కడ నొప్పిగా ఉందో ఎంచుకోండి.</span></p>
 
         <div class="field" id="fName">
-          <label for="name">Your name</label>
-          <div class="input"><input id="name" name="name" type="text" autocomplete="name" placeholder="Full name" required></div>
-          <p class="err" role="alert">Enter your name.</p>
+          <label for="name">Your name<span class="te" lang="te">మీ పేరు</span></label>
+          <div class="input"><input id="name" name="name" type="text" autocomplete="name" placeholder="Full name / పూర్తి పేరు" required></div>
+          <p class="err" role="alert">Enter your name.<span class="te" lang="te">మీ పేరు నమోదు చేయండి.</span></p>
         </div>
         <div class="field" id="fPhone">
-          <label for="phone">Mobile number</label>
-          <div class="input"><span class="pre">+91</span><input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="10-digit number" maxlength="14" required></div>
-          <p class="err" role="alert">Enter a valid 10-digit mobile number.</p>
+          <label for="phone">Mobile number<span class="te" lang="te">మొబైల్ నంబర్</span></label>
+          <div class="input"><span class="pre">+91</span><input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="10 digits / 10 అంకెలు" maxlength="14" required></div>
+          <p class="err" role="alert">Enter a valid 10-digit mobile number.<span class="te" lang="te">సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.</span></p>
         </div>
         <div class="field" id="fLoc">
-          <label for="locality">Where do you live?</label>
-          <div class="input"><input id="locality" name="locality" type="text" autocomplete="off" maxlength="60" placeholder="Your area, for example Gachibowli" required></div>
-          <p class="err" role="alert">Enter the area you live in.</p>
+          <label for="locality">Where do you live?<span class="te" lang="te">మీరు ఎక్కడ ఉంటారు?</span></label>
+          <div class="input"><input id="locality" name="locality" type="text" autocomplete="off" maxlength="60" placeholder="e.g. Gachibowli / ఉదా. గచ్చిబౌలి" required></div>
+          <p class="err" role="alert">Enter the area you live in.<span class="te" lang="te">మీరు ఉండే ప్రాంతాన్ని నమోదు చేయండి.</span></p>
         </div>
 
         <div class="hp" aria-hidden="true"><label>Company<input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
 
-        <button class="btn" type="submit" id="submit">Request a call back</button>
-        <p class="fine">Takes 20 seconds. We use your number only to call you about your visit.</p>
+        <button class="btn" type="submit" id="submit">Request a call back <span class="te" lang="te">నాకు కాల్ చేయండి</span></button>
+        <p class="fine">Takes 20 seconds. We use your number only to call you about your visit.<span class="te" lang="te">20 సెకన్లు చాలు. మీ నంబర్ మీ సందర్శన గురించి కాల్ చేయడానికి మాత్రమే వాడతాము.</span></p>
       </form>
 
       <div class="done" id="done" role="status" aria-live="polite" tabindex="-1">
-        <h2 id="doneTitle">Request received</h2>
-        <p>Our Nallagandla team will call you shortly to confirm your time. For a faster reply, message us now.</p>
-        <a class="btn wa" id="doneWa" href="#" target="_blank" rel="noopener">Message us on WhatsApp</a>
-        <a class="btn ghost" href="tel:+919030955874" data-track="call-done">Call 90309 55874</a>
+        <h2 id="doneTitle"><span id="doneEn">Request received</span><span class="te" id="doneTe" lang="te">మీ అభ్యర్థన అందింది</span></h2>
+        <p>Our Nallagandla team will call you shortly to confirm your time. While you wait, watch how we treat your pain.<span class="te" lang="te">మా నల్లగండ్ల బృందం సమయం నిర్ధారించడానికి త్వరలో మీకు కాల్ చేస్తుంది. ఈలోగా మేము మీ నొప్పికి ఎలా చికిత్స చేస్తామో చూడండి.</span></p>
+        <div class="d-video">
+          <div class="vwrap"><video id="doneVideo" controls playsinline preload="none"></video></div>
+          <div class="vtabs" id="doneTabs" hidden></div>
+          <p class="vcap" id="doneCap"></p>
+          <p class="vcap d-note" id="doneNote" hidden></p>
+        </div>
+        <a class="btn wa" id="doneWa" href="#" target="_blank" rel="noopener">Message us on WhatsApp <span class="te" lang="te">వాట్సాప్‌లో మెసేజ్ చేయండి</span></a>
+        <a class="btn ghost" href="tel:+919030955874" data-track="call-done">Call 90309 55874 <span class="te" lang="te">కాల్ చేయండి</span></a>
       </div>
     </div>
   </div>
@@ -671,11 +692,10 @@ footer p + p{margin-top:8px}
     h.addEventListener('click', function(){
       radios.forEach(function(r){ r.checked = (r.value === h.dataset.area); });
       syncHots();
-      openArea(h.dataset.area);
     });
   });
   radios.forEach(function(r){
-    r.addEventListener('change', function(){ syncHots(); if (r.checked) openArea(r.value); });
+    r.addEventListener('change', syncHots);
   });
 
   /* ---- Doctor videos: four clips cut from the Dr. Yashwanth interview ---- */
@@ -750,10 +770,6 @@ footer p + p{margin-top:8px}
     if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
     loadClip(ids[0]);
   }
-  function openArea(area){
-    var a = AREAS[area]; if (!a) return;
-    openVideos(a.heading, a.clips, a.note, area);
-  }
   player.addEventListener('play', function(){
     if (cur.fired !== cur.id) { cur.fired = cur.id; track('trackCustom', 'VideoPlay', { clip: cur.id, area: cur.area }); }
   });
@@ -816,6 +832,36 @@ footer p + p{margin-top:8px}
     else { try { var s = sessionStorage.getItem(k); if (s) attrib[k] = s; } catch(e){} }
   });
 
+  /* ---- Thank-you screen: the video for the pain area they chose ---- */
+  var doneVideo = $('#doneVideo');
+  function loadDone(id, play){
+    var c = CLIPS[id]; if (!c) return;
+    doneVideo.poster = 'media/' + id + '.jpg';
+    doneVideo.src = 'media/' + id + '.mp4';
+    doneVideo.dataset.clip = id; doneVideo.dataset.fired = '';
+    $('#doneCap').textContent = c.title + '. Video is in Telugu.';
+    $$('.vtab', $('#doneTabs')).forEach(function(t){ t.setAttribute('aria-pressed', String(t.dataset.id === id)); });
+    if (play) { var p = doneVideo.play(); if (p && p.catch) p.catch(function(){}); }   // a tap may be needed if the browser blocks sound
+  }
+  function showDoneVideo(area){
+    var a = AREAS[area] || AREAS['Other'], tabs = $('#doneTabs');
+    tabs.textContent = '';
+    a.clips.forEach(function(id){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'vtab'; b.dataset.id = id;
+      b.innerHTML = '<span></span><small></small>';
+      b.firstChild.textContent = CLIPS[id].title; b.lastChild.textContent = CLIPS[id].len;
+      b.addEventListener('click', function(){ loadDone(id, true); });
+      tabs.appendChild(b);
+    });
+    tabs.hidden = a.clips.length < 2;
+    $('#doneNote').hidden = !a.note; $('#doneNote').textContent = a.note || '';
+    loadDone(a.clips[0], true);
+  }
+  doneVideo.addEventListener('play', function(){
+    if (doneVideo.dataset.fired !== doneVideo.dataset.clip) { doneVideo.dataset.fired = doneVideo.dataset.clip; track('trackCustom', 'VideoPlay', { clip: doneVideo.dataset.clip, area: 'thank-you' }); }
+  });
+
   /* ---- Form ---- */
   var form = $('#book');
   var btn = $('#submit');
@@ -864,7 +910,7 @@ footer p + p{margin-top:8px}
     payload.fbc = readCookie('_fbc') || (attrib.fbclid ? 'fb.1.' + Date.now() + '.' + attrib.fbclid : '');
     payload.ua = navigator.userAgent;
 
-    btn.disabled = true; btn.textContent = 'Sending...';
+    btn.disabled = true; btn.textContent = 'Sending... / పంపుతోంది...';
 
     // Google's script can take a few seconds to answer. keepalive lets the save finish in the
     // background, so the thank-you screen shows after at most 1.2 seconds.
@@ -880,7 +926,10 @@ footer p + p{margin-top:8px}
         leadDone = true;
         try { sessionStorage.setItem('rw_lead', '1'); } catch(e){}
         $('#gateMsg').hidden = true;
-        $('#doneTitle').textContent = 'Request received, ' + name.split(' ')[0];
+        var first = name.split(' ')[0];
+        $('#doneEn').textContent = 'Request received, ' + first;
+        $('#doneTe').textContent = 'మీ అభ్యర్థన అందింది, ' + first;
+        showDoneVideo(area);
         $('#doneWa').href = waLink('Hi, I am ' + name + '. I have ' + area.toLowerCase() + ' pain and would like to book a consultation at Reset Wellness, ' + CONFIG.branch + '. Location: ' + locality + '. My number is ' + phone + '.');
         $('#book-card').classList.add('sent');
         var d = $('#done'); d.focus({preventScroll:true});
