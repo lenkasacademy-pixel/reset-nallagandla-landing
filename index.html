@@ -109,6 +109,11 @@ ul,ol{margin:0;padding:0;list-style:none}
 .input:focus-within{border-color:var(--blue);box-shadow:0 0 0 4px rgba(43,106,147,.16)}
 .input .pre{padding:0 12px;border-right:1px solid var(--line);font-weight:700;color:var(--muted);align-self:stretch;display:flex;align-items:center;background:var(--blue-l)}
 .input input{flex:1;min-width:0;height:50px;padding:0 14px;border:0;outline:0;background:transparent;font:500 1rem var(--font);color:var(--ink)}
+.input.select{position:relative}
+.input.select::after{content:"";position:absolute;right:16px;top:50%;width:9px;height:9px;border-right:2.5px solid var(--blue);border-bottom:2.5px solid var(--blue);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.input select{flex:1;min-width:0;height:50px;padding:0 40px 0 14px;border:0;outline:0;background:transparent;font:500 1rem var(--font);color:var(--ink);-webkit-appearance:none;appearance:none;cursor:pointer}
+.input select:invalid{color:#7b858e}
+.input select option{color:var(--ink)}
 .err{display:none;margin-top:6px;color:#B3261E;font-size:.875rem;font-weight:600}
 .field.bad .input{border-color:#B3261E}
 .field.bad .err,.chips-err.on{display:block}
@@ -372,6 +377,29 @@ footer p + p{margin-top:8px}
           <label for="phone">Mobile number</label>
           <div class="input"><span class="pre">+91</span><input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="10-digit number" maxlength="14" required></div>
           <p class="err" role="alert">Enter a valid 10-digit mobile number.</p>
+        </div>
+        <div class="field" id="fLoc">
+          <label for="locality">Where do you live?</label>
+          <div class="input select">
+            <select id="locality" name="locality" autocomplete="address-level2" required>
+              <option value="" selected disabled>Choose your area</option>
+              <option>Nallagandla</option>
+              <option>Gachibowli</option>
+              <option>Chandanagar</option>
+              <option>Madinaguda</option>
+              <option>Miyapur</option>
+              <option>Lingampally</option>
+              <option>Kondapur</option>
+              <option>Hafeezpet</option>
+              <option>Tellapur</option>
+              <option>Gopanpally</option>
+              <option>Financial District</option>
+              <option>Manikonda</option>
+              <option>HITEC City</option>
+              <option>Somewhere else</option>
+            </select>
+          </div>
+          <p class="err" role="alert">Choose the area you live in.</p>
         </div>
 
         <div class="hp" aria-hidden="true"><label>Company<input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
@@ -803,13 +831,17 @@ footer p + p{margin-top:8px}
     var name = form.name.value.trim();
     var phone = cleanPhone(form.phone.value);
     var area = (radios.filter(function(r){return r.checked;})[0] || {}).value || '';
+    var locality = form.locality.value;
     var okName = name.length >= 2;
     var okPhone = /^[6-9]\d{9}$/.test(phone);
+    var okLoc = !!locality;
     setBad('#fName', !okName);
     setBad('#fPhone', !okPhone);
+    setBad('#fLoc', !okLoc);
     $('#areaErr').classList.toggle('on', !area);
     if (!okName) return form.name.focus();
     if (!okPhone) return form.phone.focus();
+    if (!okLoc) return form.locality.focus();
     if (!area) return $('#areas input').focus();
     if (form.company.value) return;          // honeypot: bots fill this
 
@@ -819,7 +851,8 @@ footer p + p{margin-top:8px}
       name: name,
       phone: phone,
       area: area,
-      page: location.origin + location.pathname
+      location: locality,
+      page: window.location.origin + window.location.pathname
     };
     Object.keys(attrib).forEach(function(k){ payload[k] = attrib[k]; });
 
@@ -837,13 +870,13 @@ footer p + p{margin-top:8px}
         if (!CONFIG.sheetUrl) console.info('[lead] sheetUrl not set, lead not saved:', payload);
         track('track', 'Lead', { content_name: 'Nallagandla consultation', content_category: area });
         $('#doneTitle').textContent = 'Request received, ' + name.split(' ')[0];
-        $('#doneWa').href = waLink('Hi, I am ' + name + '. I have ' + area.toLowerCase() + ' pain and would like to book a consultation at Reset Wellness, ' + CONFIG.branch + '. My number is ' + phone + '.');
+        $('#doneWa').href = waLink('Hi, I am ' + name + '. I have ' + area.toLowerCase() + ' pain and would like to book a consultation at Reset Wellness, ' + CONFIG.branch + '. I live in ' + locality + '. My number is ' + phone + '.');
         $('#book-card').classList.add('sent');
         var d = $('#done'); d.focus({preventScroll:true});
         d.scrollIntoView({behavior:'smooth', block:'center'});
       });
   });
-  ['#name','#phone'].forEach(function(s){
+  ['#name','#phone','#locality'].forEach(function(s){
     $(s).addEventListener('input', function(){ this.closest('.field').classList.remove('bad'); });
   });
 })();
