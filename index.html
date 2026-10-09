@@ -771,7 +771,7 @@ footer p + p{margin-top:8px}
     loadClip(ids[0]);
   }
   player.addEventListener('play', function(){
-    if (cur.fired !== cur.id) { cur.fired = cur.id; track('trackCustom', 'VideoPlay', { clip: cur.id, area: cur.area }); }
+    if (cur.fired !== cur.id) { cur.fired = cur.id; track('trackCustom', 'VideoPlay', { clip: cur.id }); }
   });
   function stopVideo(){
     player.pause(); player.removeAttribute('src'); player.load();
@@ -859,7 +859,7 @@ footer p + p{margin-top:8px}
     loadDone(a.clips[0], true);
   }
   doneVideo.addEventListener('play', function(){
-    if (doneVideo.dataset.fired !== doneVideo.dataset.clip) { doneVideo.dataset.fired = doneVideo.dataset.clip; track('trackCustom', 'VideoPlay', { clip: doneVideo.dataset.clip, area: 'thank-you' }); }
+    if (doneVideo.dataset.fired !== doneVideo.dataset.clip) { doneVideo.dataset.fired = doneVideo.dataset.clip; track('trackCustom', 'VideoPlay', { area: 'thank-you' }); }
   });
 
   /* ---- Form ---- */
@@ -922,7 +922,7 @@ footer p + p{margin-top:8px}
     Promise.race([send.catch(function(){ /* network failure: still show the WhatsApp fallback below */ }), grace])
       .then(function(){
         if (!CONFIG.sheetUrl) console.info('[lead] sheetUrl not set, lead not saved:', payload);
-        track('track', 'Lead', { content_name: 'Nallagandla consultation', content_category: area }, { eventID: eventId });
+        track('track', 'Lead', { content_name: 'Nallagandla consultation' }, { eventID: eventId });
         leadDone = true;
         try { sessionStorage.setItem('rw_lead', '1'); } catch(e){}
         $('#gateMsg').hidden = true;
